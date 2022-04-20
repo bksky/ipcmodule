@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(ipcmodule)
+project(ipc)
 
 get_filename_component(ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../src/ ABSOLUTE)
 
@@ -14,33 +14,17 @@ set(VERSION_PATCH 0)
 set(VERSION_TWEAK 0)
 set(SDK_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_TWEAK}")
 
-include_directories(${ROOT_PATH}/../interface)
-
-file(GLOB SRC_FILES ${ROOT_PATH}/*.cpp)
-set(PUBLIC_HEADERS ${ROOT_PATH}/../interface/ipc_base.h)
 
 set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/output")
 
-add_definitions("-DAGORA_EXPORT")
+add_subdirectory(ipcmodule)
+add_subdirectory(ipcsender)
+add_subdirectory(ipcreceiver)
 
-add_library(${PROJECT_NAME} SHARED ${PUBLIC_HEADERS} ${SRC_FILES})
+set(ALL_TARGETS ipcmodule ipcmodule ipcsender ipcreceiver)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        VERSION "${SDK_VERSION}"
-        SOVERSION "${SDK_VERSION}"
-        PUBLIC_HEADER "${PUBLIC_HEADERS}"
-        ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIR}"
-        LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}"
-        RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}"
-        PDB_OUTPUT_DIRECTORY "${OUTPUT_DIR}"
-        )
-
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${ALL_TARGETS}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         PUBLIC_HEADER DESTINATION include)
-
-if(WIN32)
-    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION symbol)
-endif()
