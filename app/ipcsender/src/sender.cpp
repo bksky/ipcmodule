@@ -32,8 +32,8 @@ int main(int argc, char** argv){
         string data2 = buff2 + std::to_string(sendcount);
         pSender1->sendData((char*)data1.c_str(), data1.length());
         cout << "[test1] send data: " << data1 << endl;
-        pSender2->sendData((char*)data2.c_str(), data2.length());
-        cout << "[test2] send data: " << data2 << endl;
+		pSender2->sendData((char*)data2.c_str(), data2.length());
+		cout << "[test2] send data: " << data2 << endl;
 #ifdef WIN32
         Sleep(1000);
 #endif
