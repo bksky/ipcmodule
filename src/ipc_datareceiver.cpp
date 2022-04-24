@@ -12,6 +12,9 @@ public:
   virtual bool
   initialize(const std::string &id,
              const std::function<void(const char *, int)> &handler) override {
+    if(m_initialized == true)
+      return true;
+      
     if (m_ipcData.open(id) != 0) {
       return false;
     }
