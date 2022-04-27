@@ -20,8 +20,9 @@ set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/output")
 add_subdirectory(ipcmodule)
 add_subdirectory(ipcsender)
 add_subdirectory(ipcreceiver)
+add_subdirectory(ipcreceiverElectronVideo)
 
-set(ALL_TARGETS ipcmodule ipcmodule ipcsender ipcreceiver)
+set(ALL_TARGETS ipcmodule ipcmodule ipcsender ipcreceiver ipcreceiverElectronVideo)
 
 install(TARGETS ${ALL_TARGETS}
         RUNTIME DESTINATION bin

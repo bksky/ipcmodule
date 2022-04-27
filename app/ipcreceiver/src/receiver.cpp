@@ -10,7 +10,7 @@
 using namespace std;
 using namespace std::placeholders;
 
-void eventCb(const char* buffer, int length){
+void eventCb(const char* buffer, int length, unsigned int uid, const char* channelId){
     cout << "recv data: " << buffer << endl;
 }
 
@@ -20,11 +20,11 @@ int main(int argc, char** argv){
 
     string id1 = "test1";
     string id2 = "test2";
-    if(false == pReceiver1->initialize(id1, std::bind(&eventCb, _1, _2))){
+    if(false == pReceiver1->initialize(id1, std::bind(&eventCb, _1, _2, _3, _4), 1, "test")){
         cout << "IAgoraIpcDataReceiver1 initialize failed" << endl;
         return -1;
     }
-    if(false == pReceiver2->initialize(id2, std::bind(&eventCb, _1, _2))){
+    if(false == pReceiver2->initialize(id2, std::bind(&eventCb, _1, _2, _3, _4), 1, "test")){
         cout << "IAgoraIpcDataReceiver1 initialize failed" << endl;
         return -1;
     }
@@ -38,9 +38,7 @@ int main(int argc, char** argv){
 #endif
     }
 
-    pReceiver1->stop();
-    pReceiver2->stop();
-
+  
     releaseIpcReceiver(pReceiver1);
     releaseIpcReceiver(pReceiver2);
     return 0;
