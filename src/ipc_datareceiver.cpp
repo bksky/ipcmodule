@@ -11,7 +11,8 @@ public:
 
   virtual bool
   initialize(const std::string &id,
-             const std::function<void(const char *, int)> &handler) override {
+             const std::function<void(const char *, int, unsigned int, const char*)> &handler,
+	  unsigned int uid, const std::string& channelId) override {
     if(m_initialized == true)
       return true;
       
@@ -22,6 +23,8 @@ public:
       m_ipcData.close();
       return false;
     }
+	m_channelId = channelId;
+	m_uid = uid;
     m_id = id;
     m_handler = handler;
     m_initialized = true;
@@ -38,7 +41,7 @@ public:
       while (true) {
         if (m_ipcData.read(0, buffer, DATA_DELIVER_BLOCK_SIZE) >= 0) {
           if (m_handler) {
-            m_handler(buffer, DATA_DELIVER_BLOCK_SIZE);
+			  m_handler(buffer, DATA_DELIVER_BLOCK_SIZE, m_uid, m_channelId.c_str());
           }
         } else {
           break;
@@ -53,7 +56,7 @@ public:
     }
   };
 
-  virtual void stop() override {
+   void stop() {
     if (m_initialized) {
       m_ipcData.close_channel(0, CHANNEL_READ);
 
@@ -64,8 +67,10 @@ public:
   };
 
 private:
-  std::function<void(const char *, int)> m_handler;
+  std::function<void(const char *, int, unsigned int, const char*)> m_handler;
   std::string m_id;
+  unsigned int m_uid;
+  std::string m_channelId;
   bool m_initialized;
   shm_ipc<1, DATA_DELIVER_BLOCK_SIZE> m_ipcData;
   std::unique_ptr<std::thread> m_thread;
