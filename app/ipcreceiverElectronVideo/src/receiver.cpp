@@ -61,7 +61,7 @@ void eventCb(const char* buffer, int length, unsigned int uid, const char* chann
 	video_ipc_data* data = (video_ipc_data*)buffer;
 	char szInfo[500] = { 0 };
 	char* videoBuffer = (char*)data + sizeof(video_ipc_header_type) + sizeof(video_ipc_info);
-	sprintf_s(szInfo, 500, "uid:%u,channelId:%s, format=%d, stride=%d, width=%d, height=%d, strideU=%d, length=%d, videoBuffer=%x \n"
+	sprintf(szInfo, "uid:%u,channelId:%s, format=%d, stride=%d, width=%d, height=%d, strideU=%d, length=%d, videoBuffer=%x \n"
 		, uid, channelId, data->type.format, data->info.stride, data->info.width, data->info.height, data->info.strideU, data->info.length, videoBuffer);
 	cout << "recv data: " << szInfo << endl;
 	
