@@ -56,21 +56,24 @@ struct video_ipc_data {
 	video_ipc_info info;
 	char* buffer;
 };
-
+unsigned int currentUid = 10;
 void eventCb(const char* buffer, int length, unsigned int uid, const char* channelId){
 	video_ipc_data* data = (video_ipc_data*)buffer;
-	char szInfo[500] = { 0 };
-	char* videoBuffer = (char*)data + sizeof(video_ipc_header_type) + sizeof(video_ipc_info);
-	sprintf(szInfo, "uid:%u,channelId:%s, format=%d, stride=%d, width=%d, height=%d, strideU=%d, length=%d, videoBuffer=%x \n"
-		, uid, channelId, data->type.format, data->info.stride, data->info.width, data->info.height, data->info.strideU, data->info.length, videoBuffer);
-	cout << "recv data: " << szInfo << endl;
-	
+
+	if (currentUid != uid) {
+		char szInfo[500] = { 0 };
+		char* videoBuffer = (char*)data + sizeof(video_ipc_header_type) + sizeof(video_ipc_info);
+		sprintf_s(szInfo, 500, "uid:%u,channelId:%s, format=%d, stride=%d, width=%d, height=%d, strideU=%d, length=%d, videoBuffer=%x \n"
+			, uid, channelId, data->type.format, data->info.stride, data->info.width, data->info.height, data->info.strideU, data->info.length, videoBuffer);
+		cout << "recv data: " << szInfo << endl;
+		currentUid = uid;
+	}
 }
 std::string getId(std::string channelId, unsigned int uid)
 {
 	char szUid[20] = { 0 };
 	sprintf(szUid, "%d", uid);
-	return  ipcName + localChannelId1 + "_" + szUid;
+	return  ipcName + channelId + "_" + szUid;
 }
 
 class IPCManagerTest
@@ -148,7 +151,7 @@ bool IPCManagerTest::Initialize(unsigned int uid, std::string channelId) {
 	if (m_ipcRecv.find(id) != m_ipcRecv.end())
 		return true;
 	IAgoraIpcDataReceiver* pReceiver = createIpcReceiver();
-	bool ret = pReceiver->initialize(id, std::bind(&eventCb, _1, _2, _3, _4), localuid1, localChannelId1);
+	bool ret = pReceiver->initialize(id, std::bind(&eventCb, _1, _2, _3, _4), uid, channelId);
 	if (ret) {
 		m_ipcRecv[id] = pReceiver;
 	}
